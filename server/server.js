@@ -8,6 +8,10 @@ class Server {
     constructor() {
         this.app = express();
         this.port = process.env.PORT;
+        this.routesPath = 
+        {
+            users: '/api/users'
+        };
 
         this.middlewares();
 
@@ -23,21 +27,7 @@ class Server {
     }
 
     routes() {
-        this.app.get('/api', (req, res) => {
-            res.json({ msg: "GET method"});
-        });
-
-        this.app.post('/api', (req, res) => {
-            res.status(501).json({ msg: "POST method"});
-        });
-
-        this.app.put('/api', (req, res) => {
-            res.status(501).json({ msg: "PUT method"});
-        });
-
-        this.app.delete('/api', (req, res) => {
-            res.status(501).json({ msg: "DELETE method"});
-        });  
+        this.app.use(this.routesPath.users, require('./routes/users.routes'));
     }
 
     listen() {
