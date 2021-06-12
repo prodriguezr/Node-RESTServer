@@ -8,13 +8,20 @@ class Server {
         this.app = express();
         this.port = process.env.PORT;
 
-        this.app.use(morgan('dev'));
-        
+        this.middlewares();
+
+        // Routes in the app        
         this.routes();
     }
 
+    // Midddlewares
+    middlewares() {
+        this.app.use(morgan('dev'));
+        this.app.use(express.static('public'));
+    }
+
     routes() {
-        this.app.get('/', (req, res) => {
+        this.app.get('/api', (req, res) => {
             res.send('Hello World!');
         });  
     }
