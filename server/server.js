@@ -24,6 +24,9 @@ class Server {
         this.app.use(morgan('dev'));
         this.app.use(express.static('public'));
         this.app.use(cors());
+
+        // Read and parse body
+        this.app.use(express.json());
     }
 
     routes() {

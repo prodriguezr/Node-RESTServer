@@ -7,10 +7,10 @@ router.get('/', getUsers);
 
 router.post('/', postUsers);
 
-router.put('/', putUsers);
+router.put('/:userId', putUsers);
 
-router.delete('/', delUsers);  
+router.delete('/:id', delUsers);  
 
-router.patch('/', patUsers);  
+router.patch('/:id', patUsers);  
 
 module.exports = router;
