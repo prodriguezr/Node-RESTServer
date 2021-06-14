@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
+const { dbConnection } = require('../db/db-connection');
 
 class Server {
     constructor() {
@@ -13,10 +14,17 @@ class Server {
             users: '/api/users'
         };
 
+        // DB Connection
+        this.db();
+
         this.middlewares();
 
         // Routes in the app        
         this.routes();
+    }
+
+    async db() {
+        await dbConnection();        
     }
 
     // Midddlewares
