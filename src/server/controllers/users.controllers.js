@@ -1,4 +1,5 @@
 const { request, response } = require('express');
+const User = require('../../models/user');
 
 const getUsers = (req = request, res = response) => {
     const query = req.query;
@@ -9,13 +10,27 @@ const getUsers = (req = request, res = response) => {
     });
 }
 
-const postUsers = (req = request, res = response) => {
-    const { name, age } = req.body;
+const postUsers = async(req = request, res = response) => {
+    const { name, email, password, role } = req.body;
+    
+    const user = new User({ name, email, password, role });
+
+    // res.status(200).json({
+    //     msg: "User POST method",
+    //     name,
+    //     email,
+    //     password, 
+    //     google, 
+    //     img, 
+    //     role,
+    //     status
+    // });
+
+    await user.save();
 
     res.status(200).json({
         msg: "User POST method",
-        name,
-        age,
+        user,
     });
 }
 

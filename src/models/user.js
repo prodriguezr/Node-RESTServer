@@ -10,13 +10,17 @@ const UserSchema = Schema({
         required: [true, 'Email is required'],
         unique: true,
     },
-    password: {
-        type: String,
-        required: [true, 'Password is required'],
+    google: {
+        type: Boolean,
+        default: false,
     },
     img: {
         type: String,
         required: false,
+    },
+    password: {
+        type: String,
+        required: [true, 'Password is required'],
     },
     role: {
         type: String,
@@ -26,10 +30,6 @@ const UserSchema = Schema({
             message: '{VALUE} is not supported'
         }
       
-    },
-    google: {
-        type: Boolean,
-        default: true,
     },
     status: {
         type: Boolean,
