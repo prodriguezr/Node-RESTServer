@@ -1,5 +1,7 @@
 const { request, response } = require('express');
 const User = require('../../models/user');
+const bcryptjs = require('bcryptjs');
+const { validationResult } = require('express-validator');
 
 const getUsers = (req = request, res = response) => {
     const query = req.query;
@@ -11,27 +13,44 @@ const getUsers = (req = request, res = response) => {
 }
 
 const postUsers = async(req = request, res = response) => {
-    const { name, email, password, role } = req.body;
-    
-    const user = new User({ name, email, password, role });
+    try {
+        const err = validationResult(req);
 
-    // res.status(200).json({
-    //     msg: "User POST method",
-    //     name,
-    //     email,
-    //     password, 
-    //     google, 
-    //     img, 
-    //     role,
-    //     status
-    // });
+        if (!err.isEmpty()) {
+            return res.status(400).json({
+                errors: err.errors,
+            });
+        }
 
-    await user.save();
+        const { name, email, password, role } = req.body;
+        
+        const user = new User({ name, email, password, role });
+        
+        // Check if email exists
+        const emailExists = await User.findOne({ email });
+        
+        if (emailExists) {
+            return res.status(400).json({
+                msg: "The user with that email already exists",
+            });
+        }
+        
+        // Generate crypt password
+        const salt = bcryptjs.genSaltSync();
+        user.password = bcryptjs.hashSync(user.password, salt);
 
-    res.status(200).json({
-        msg: "User POST method",
-        user,
-    });
+        await user.save();
+        
+        return res.status(200).json({
+            user,
+        });
+    } catch (err) {
+        console.log(err);
+        
+        res.status(500).json({
+            msg: "Error in user POST method",
+        });
+    }
 }
 
 const putUsers = (req = request, res = response) => {
