@@ -22,7 +22,10 @@ router.put('/:userId', [
     validateFields,
 ], putUsers);
 
-router.delete('/:id', delUsers);  
+router.delete('/:userId', [
+    check('userId', 'MongoId is invalid').isMongoId().custom(existsUserById),
+    validateFields,
+], delUsers);  
 
 router.patch('/:id', patUsers);  
 

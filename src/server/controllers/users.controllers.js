@@ -64,8 +64,12 @@ const putUsers = async(req = request, res = response) => {
     });
 }
 
-const delUsers = (req = request, res = response) => {
-    res.status(501).json({ msg: "User DELETE method"});
+const delUsers = async(req = request, res = response) => {
+    const { userId } = req.params;
+
+    const user = await User.findByIdAndUpdate(userId, { status: false });
+
+    res.status(200).json({ msg: user ? 'OK' : 'Error' });
 } 
 
 const patUsers = (req = request, res = response) => {
