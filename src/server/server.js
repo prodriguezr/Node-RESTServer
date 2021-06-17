@@ -4,6 +4,7 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 const { dbConnection } = require('../db/db-connection');
+const { validateJSON } = require('../middlewares/validate-json');
 
 class Server {
     constructor() {
@@ -33,9 +34,12 @@ class Server {
         this.app.use(morgan('dev'));
         this.app.use(express.static('public'));
         this.app.use(cors());
-
+        
         // Read and parse body
         this.app.use(express.json());
+
+        // Validate if the json is well formed
+        this.app.use(validateJSON);
     }
 
     routes() {
