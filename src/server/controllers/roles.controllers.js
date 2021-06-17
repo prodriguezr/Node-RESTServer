@@ -15,8 +15,12 @@ const getRoles = async(req = request, res = response) => {
     const pages = Math.ceil(Number(total) / Number(limit));
 
     res.json({
-        total,
-        pages,
+        info: {
+            total,
+            pages,
+            limit,
+            from,
+        },
         roles,
     });
 }
