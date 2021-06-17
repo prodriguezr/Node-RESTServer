@@ -14,7 +14,8 @@ class Server {
         {
             users: '/api/users',
             roles: '/api/roles',
-        };
+            auth:  '/api/auth',
+        }
 
         // DB Connection
         this.db();
@@ -45,6 +46,7 @@ class Server {
     routes() {
         this.app.use(this.routesPath.users, require('./routes/users.routes'));
         this.app.use(this.routesPath.roles, require('./routes/roles.routes'));
+        this.app.use(this.routesPath.auth, require('./routes/auth.routes'));
     }
 
     listen() {
