@@ -70,13 +70,15 @@ const putUsers = async(req = request, res = response) => {
 
 const delUsers = async(req = request, res = response) => {
     const { userId } = req.params;
-    const { uid } = req;
-
-    console.log(uid);
     
     const user = await User.findByIdAndUpdate(userId, { status: false });
 
-    res.status(200).json({ msg: user ? 'OK' : 'Error' });
+    res.status(200).json({
+        status: 200,
+        user,
+        authUser: req.user,
+
+    });
 } 
 
 const patUsers = (req = request, res = response) => {
