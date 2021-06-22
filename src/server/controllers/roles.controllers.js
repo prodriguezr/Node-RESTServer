@@ -1,31 +1,34 @@
 const { request, response } = require('express');
-const Role = require('../../models/role');
+const { Role } = require('../../models');
 
 const getRoles = async(req = request, res = response) => {
     const { limit = 5, from = 0 } = req.query;
     const query = { status: true }
 
-    const [ total, roles ] = await Promise.all([
+    const [ total, rolesTmp ] = await Promise.all([
         Role.countDocuments(query),
         Role.find(query)
             .skip(Number(from))
             .limit(Number(limit))
     ]);
 
-    const pages = Math.ceil(Number(total) / Number(limit));
+    const roles = [];
+    
+    rolesTmp.forEach((r) => {
+        roles.push(r.name);
+    });
 
-    res.json({
+    res.status(200).json({
+        status: 200,
         info: {
             total,
-            pages,
-            limit,
-            from,
+            pages: 1,
         },
-        roles,
+        data: roles,
     });
 }
 
-const postRole = async(req = request, res = response) => {
+const createRoles = async(req = request, res = response) => {
     try {
         const { name } = req.body;
         
@@ -34,43 +37,41 @@ const postRole = async(req = request, res = response) => {
         await role.save();
         
         return res.status(200).json({
-            role,
+            status: 200,
+            data: role,
         });
     } catch (err) {
         console.log(err);
         
         res.status(500).json({
-            msg: "Error in Role POST method",
+            msg: "Error in Create Role (POST) method",
         });
     }
 }
 
-const putRole = async(req = request, res = response) => {
+const modifyRoles = async(req = request, res = response) => {
     const { roleId } = req.params;
 
     const { _id, name, ... rest } = req.body;
 
     const role = await Role.findByIdAndUpdate(roleId, { name });
 
-    res.status(200).json({ msg: role ? 'OK' : 'Error' });
+    res.status(200).json({ status: 200, msg: 'OK' });
 }
 
-const delRole = async(req = request, res = response) => {
+const deleteRoles = async(req = request, res = response) => {
     const { roleId } = req.params;
 
-    const role = await User.findByIdAndUpdate(roleId, { status: false });
+    const deleted = Date.now();
 
-    res.status(200).json({ msg: role ? 'OK' : 'Error' });
-} 
+    const role = await Role.findByIdAndUpdate(roleId, { status: false, deleted });
 
-const patRole = (req = request, res = response) => {
-    res.status(501).json({ msg: "User PATCH method"});
-} 
+    res.status(200).json({ status: 200, msg: 'OK' });
+}
 
 module.exports = {
     getRoles,
-    postRole,
-    putRole,
-    delRole,
-    patRole
+    createRoles,
+    modifyRoles,
+    deleteRoles,
 }

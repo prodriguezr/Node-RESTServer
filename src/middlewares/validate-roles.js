@@ -1,7 +1,7 @@
 const { response, request } = require('express');
 const Role = require('../models/role');
 
-const isAdminRole = (req = request, res = response, next) => {
+const isAdminRole = async(req = request, res = response, next) => {
     if (!req.user) {
         console.log(`isAdminRole - You must invoke the "validateJWT" middleware first`);
 
@@ -11,9 +11,11 @@ const isAdminRole = (req = request, res = response, next) => {
         });
     }
 
-    const { role = '', name } = req.user;
+    const { role: roleId, name } = req.user;
 
-    if (role.toUpperCase() !== "ADMIN") {
+    const role = await Role.findById(roleId);
+
+    if (role.name.toUpperCase() !== "ADMIN") {
         return res.status(401).json({
             status: 401,
             msg: `'The user ${name} does not have the required role`
@@ -24,7 +26,7 @@ const isAdminRole = (req = request, res = response, next) => {
 }
 
 const hasRole = ( ... roles ) => {
-    return (req = request, res = response, next) => {
+    return async(req = request, res = response, next) => {
         if (!req.user) {
             console.log(`hasRole - You must invoke the "validateJWT" middleware first`);
     
@@ -34,7 +36,9 @@ const hasRole = ( ... roles ) => {
             });
         }
 
-        if (!roles.includes(req.user.role.toUpperCase())) {
+        const { roleName } = await Role.findById(req.user.role);
+
+        if (!roles.includes(roleName.toUpperCase())) {
             return res.status(401).json({
                 status: 401,
                 msg: `This service require one of these roles "${roles}"`

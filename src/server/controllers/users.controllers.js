@@ -1,5 +1,5 @@
 const { request, response } = require('express');
-const User = require('../../models/user');
+const { User, Role } = require('../../models');
 const bcryptjs = require('bcryptjs');
 
 const getUsers = async(req = request, res = response) => {
@@ -26,11 +26,19 @@ const getUsers = async(req = request, res = response) => {
     });
 }
 
-const postUsers = async(req = request, res = response) => {
+const createUsers = async(req = request, res = response) => {
     try {
         const { name, email, password, role } = req.body;
         
-        const user = new User({ name, email, password, role });
+        const { _id } = await Role.findOne({name: role, status: true });
+
+        console.log(_id);
+
+        if (!_id) {
+            throw new Error('roleid is empty');
+        }
+        
+        const user = new User({ name, email, password, role: _id });
 
         // Generate crypt password
         const salt = bcryptjs.genSaltSync();
@@ -50,7 +58,7 @@ const postUsers = async(req = request, res = response) => {
     }
 }
 
-const putUsers = async(req = request, res = response) => {
+const modifyUsers = async(req = request, res = response) => {
     const { userId } = req.params;
 
     const { _id, password, google, status, email, ... rest } = req.body;
@@ -68,7 +76,7 @@ const putUsers = async(req = request, res = response) => {
     });
 }
 
-const delUsers = async(req = request, res = response) => {
+const deleteUsers = async(req = request, res = response) => {
     const { userId } = req.params;
     
     const user = await User.findByIdAndUpdate(userId, { status: false });
@@ -81,8 +89,8 @@ const delUsers = async(req = request, res = response) => {
     });
 } 
 
-const patUsers = (req = request, res = response) => {
+const patchUsers = (req = request, res = response) => {
     res.status(501).json({ msg: "User PATCH method"});
 } 
 
-module.exports = { getUsers, postUsers, putUsers, delUsers, patUsers }
+module.exports = { getUsers, createUsers, modifyUsers, deleteUsers, patchUsers }

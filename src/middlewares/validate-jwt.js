@@ -1,7 +1,7 @@
 const { request, response } = require('express');
 const jwt = require('jsonwebtoken');
 
-const User = require('../models/user');
+const { User } = require('../models');
 
 const validateJWT = async(req = request, res = response, next) => {
     const token = req.header('x-keyapp');
@@ -16,7 +16,7 @@ const validateJWT = async(req = request, res = response, next) => {
     try {
         const { uid } = jwt.verify(token, process.env.SECRET);
 
-        const user = await User.findOne({ _id: uid, status: true });
+        const user = await User.findOne({ _id: uid, status: true }).populate('role');
 
         if (!user) {
             console.log(`User does not exist in the database`);

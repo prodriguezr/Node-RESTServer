@@ -1,29 +1,27 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { isValidRole, existsRoleById, existsRoleByName } = require('../../helpers/db/role-validators');
-const { validateFields } = require('../../middlewares/validate-fields');
-const { getRoles, postRole, putRole, patRole, delRole } = require('../controllers/roles.controllers');
+const { isValidRole, existsRoleById, existsRoleByName } = require('../../helpers/db');
+const { validateFields } = require('../../middlewares');
+const { RolesCtrl } = require('../controllers');
 
 const router = Router();
 
-router.get('/', getRoles);
+router.get('/', RolesCtrl.getRoles);
 
 router.post('/', [
     check('name', 'Name field is required').not().isEmpty().custom(existsRoleByName),
     validateFields,
-], postRole);
+], RolesCtrl.createRoles);
 
 router.put('/:roleId', [
     check('roleId', 'MongoId is invalid').isMongoId().custom(existsRoleById),
     check('name', 'Name is required').not().isEmpty(),
     validateFields,
-], putRole);
+], RolesCtrl.modifyRoles);
 
 router.delete('/:roleId', [
     check('roleId', 'MongoId is invalid').isMongoId().custom(existsRoleById),
     validateFields,
-], delRole);  
-
-router.patch('/:id', patRole);  
+], RolesCtrl.deleteRoles);  
 
 module.exports = router;

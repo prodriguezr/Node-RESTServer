@@ -10,10 +10,25 @@ const RoleSchema = Schema({
         default: true,
         required: true,
     },
+    created: {
+        type: Date,
+        default: Date.now,
+        required: [true, 'Created date is required'], 
+    },
+    updated: {
+        type: Date,
+        default: undefined,
+        required: false, 
+    },
+    deleted: {
+        type: Date,
+        default: undefined,
+        required: false, 
+    },
 });
 
 RoleSchema.methods.toJSON = function() {
-    const { __v, status, _id, ... role } = this.toObject();
+    const { __v, status, _id, created, updated, deleted, ... role } = this.toObject();
 
     return role;
 }

@@ -5,16 +5,16 @@ const morgan = require('morgan');
 const cors = require('cors');
 const { dbConnection } = require('../db/db-connection');
 const { validateJSON } = require('../middlewares/validate-json');
-
 class Server {
     constructor() {
         this.app = express();
         this.port = process.env.PORT;
         this.routesPath = 
         {
-            users: '/api/users',
-            roles: '/api/roles',
             auth:  '/api/auth',
+            categories: '/api/categories',
+            roles: '/api/roles',
+            users: '/api/users',
         }
 
         // DB Connection
@@ -44,9 +44,17 @@ class Server {
     }
 
     routes() {
-        this.app.use(this.routesPath.users, require('./routes/users.routes'));
-        this.app.use(this.routesPath.roles, require('./routes/roles.routes'));
-        this.app.use(this.routesPath.auth, require('./routes/auth.routes'));
+        const { 
+            Auth, 
+            Categories, 
+            Roles, 
+            Users 
+        } = require('./routes');
+
+        this.app.use(this.routesPath.auth, Auth);
+        this.app.use(this.routesPath.categories, Categories);
+        this.app.use(this.routesPath.roles, Roles);
+        this.app.use(this.routesPath.users, Users);
     }
 
     listen() {

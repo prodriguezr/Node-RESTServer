@@ -23,19 +23,36 @@ const UserSchema = Schema({
         required: [true, 'Password is required'],
     },
     role: {
-        type: String,
-        required: [true, 'Role is required'],
-        default: 'USER',
-        enum: {
-            values: ['ADMIN', 'USER'],
-            message: '{VALUE} is not supported'
-        }
+        type: Schema.Types.ObjectId ,
+        required: true,
+        ref: 'Role'
+
+        // default: 'USER',
+        // enum: {
+        //     values: ['ADMIN', 'USER'],
+        //     message: '{VALUE} is not supported'
+        // }
       
     },
     status: {
         type: Boolean,
         default: true,
         required: true,
+    },
+    created: {
+        type: Date,
+        default: Date.now,
+        required: [true, 'Created date is required'], 
+    },
+    updated: {
+        type: Date,
+        default: undefined,
+        required: false, 
+    },
+    deleted: {
+        type: Date,
+        default: undefined,
+        required: false, 
     },
 });
 
