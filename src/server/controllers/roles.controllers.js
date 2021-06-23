@@ -54,7 +54,7 @@ const modifyRoles = async(req = request, res = response) => {
 
     const { _id, name, ... rest } = req.body;
 
-    const role = await Role.findByIdAndUpdate(roleId, { name });
+    await Role.findByIdAndUpdate(roleId, { name });
 
     res.status(200).json({ status: 200, msg: 'OK' });
 }
@@ -64,7 +64,7 @@ const deleteRoles = async(req = request, res = response) => {
 
     const deleted = Date.now();
 
-    const role = await Role.findByIdAndUpdate(roleId, { status: false, deleted });
+    await Role.findByIdAndUpdate(roleId, { status: false, deleted });
 
     res.status(200).json({ status: 200, msg: 'OK' });
 }

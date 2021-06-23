@@ -4,7 +4,7 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 const { dbConnection } = require('../db/db-connection');
-const { validateJSON } = require('../middlewares/validate-json');
+const { validateJSON } = require('../middlewares');
 class Server {
     constructor() {
         this.app = express();
@@ -13,6 +13,7 @@ class Server {
         {
             auth:  '/api/auth',
             categories: '/api/categories',
+            products: '/api/products',
             roles: '/api/roles',
             users: '/api/users',
         }
@@ -46,13 +47,15 @@ class Server {
     routes() {
         const { 
             Auth, 
-            Categories, 
+            Categories,
+            Products, 
             Roles, 
             Users 
         } = require('./routes');
 
         this.app.use(this.routesPath.auth, Auth);
         this.app.use(this.routesPath.categories, Categories);
+        this.app.use(this.routesPath.products, Products);
         this.app.use(this.routesPath.roles, Roles);
         this.app.use(this.routesPath.users, Users);
     }

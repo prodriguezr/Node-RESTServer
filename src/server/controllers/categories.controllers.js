@@ -16,12 +16,12 @@ const getCategories = async(req = request, res = response) => {
 
     res.json({
         info: {
-            total: total,
+            total,
             pages,
             limit,
             from,
         },
-        categories,
+        data: categories,
     });
 }
 
@@ -38,14 +38,15 @@ const getCategoryById = async(req = request, res = response) => {
 
 const createCategory = async(req = request, res = response) => {
     try {
-        const { name } = req.body;
+        const { name = '' } = req.body;
         
-        const category = new Category({ name, user: req.user.id });
+        const category = new Category({ name: name.toLowerCase(), createdBy: req.user.id });
 
         await category.save();
         
         return res.status(200).json({
-            category,
+            status: 200,
+            data: { category },
         });
     } catch (err) {
         console.log(err);

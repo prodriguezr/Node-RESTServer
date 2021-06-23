@@ -1,5 +1,6 @@
 const { request, response } = require('express');
 const bcryptjs = require('bcryptjs');
+
 const { User } = require('../../models');
 const { generateJWT } = require('../../helpers/jwt/utils');
 const { googleVerify } = require('../../helpers/google-verify');
@@ -33,13 +34,14 @@ const login = async(req = request, res = response) => {
 
         const token = await generateJWT(user.id);
 
-        res.json({
-            user,
-            token,
+        res.status(200).json({
+            status: 200,
+            data: { token },
          });
     } catch (err) {
         console.log(err);
         res.status(500).json({
+            status: 500,
             msg: 'An error has occurred, contact the Administrator for more information'
         });
     }
@@ -75,9 +77,9 @@ const googleSignIn = async(req = request, res = response) => {
 
         const token = await generateJWT(user.id);
 
-        res.json({
-            user,
-            token,
+        res.status(200).json({
+            status: 200,
+            data: { token },
          });
     } catch (err) {
         console.log(err);

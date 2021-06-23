@@ -1,7 +1,12 @@
-const { Router, response, request } = require('express');
 const { check } = require('express-validator');
-const { validateFields, validateJWT } = require('../../middlewares');
+const { Router } = require('express');
+
+const { validateFields, 
+    validateJWT, 
+    isAdminRole 
+} = require('../../middlewares');
 const { CategoriesCtrl } = require('../controllers');
+const { existsCategoryById, existsCategoryByName } = require('../../helpers/db');
 
 const router = Router();
 
@@ -14,18 +19,31 @@ router.get('/:id', CategoriesCtrl.getCategories);
 // Create category - Private - Any person with a valid token
 router.post('/', [ 
     validateJWT,
-    check('name', 'Name is required').not().isEmpty(), 
+    check('name', 'Name is required')
+        .not()
+        .isEmpty()
+        .custom(existsCategoryByName), 
     validateFields,
 ], CategoriesCtrl.createCategory);
 
 // Modify category - Private - Any person with a valid token
-router.put('/:categoryId', (req = request, res = response) => {
-    res.json({ msg: 'PUT method' });
-});
+router.put('/:categoryId', [
+    validateJWT,
+    isAdminRole,
+    check('categoryId', 'categoryId is not a valid Mongo ID').isMongoId(),
+    check('categoryId').custom(existsCategoryById),
+    check('name', 'Name is required').not().isEmpty(), 
+    validateFields,
+], CategoriesCtrl.modifyCategory);
 
 // Delete a category - Only users with ADMIN role
-router.delete('/:categoryId', (req = request, res = response) => {
-    res.json({ msg: 'DELETE method'});
-});
+router.delete('/:categoryId', [
+    validateJWT,
+    isAdminRole,
+    check('categoryId', 'categoryId is not a valid Mongo ID').isMongoId(),
+    check('categoryId').custom(existsCategoryById),
+    check('name', 'Name is required').not().isEmpty(), 
+    validateFields,
+], CategoriesCtrl.deleteCategory);
 
 module.exports = router;

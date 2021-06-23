@@ -22,7 +22,7 @@ const getUsers = async(req = request, res = response) => {
             limit,
             from,
         },
-        users,
+        data: { users },
     });
 }
 
@@ -30,7 +30,7 @@ const createUsers = async(req = request, res = response) => {
     try {
         const { name, email, password, role } = req.body;
         
-        const { _id } = await Role.findOne({name: role, status: true });
+        const { _id } = await Role.findOne({ name: role, status: true });
 
         console.log(_id);
 
@@ -47,12 +47,14 @@ const createUsers = async(req = request, res = response) => {
         await user.save();
         
         return res.status(200).json({
-            user,
+            status: 200,
+            data: { user },
         });
     } catch (err) {
         console.log(err);
         
         res.status(500).json({
+            status: 500,
             msg: "Error in user POST method",
         });
     }
@@ -72,7 +74,8 @@ const modifyUsers = async(req = request, res = response) => {
     const user = await User.findByIdAndUpdate(userId, rest);
 
     res.status(200).json({
-        user,
+        status: 200,
+        data: { user },
     });
 }
 
@@ -83,14 +86,21 @@ const deleteUsers = async(req = request, res = response) => {
 
     res.status(200).json({
         status: 200,
-        user,
-        authUser: req.user,
-
+        data: { user } ,
     });
 } 
 
 const patchUsers = (req = request, res = response) => {
-    res.status(501).json({ msg: "User PATCH method"});
+    res.status(501).json({ 
+        status: 501,
+        msg: "User PATCH method not implemented"
+    });
 } 
 
-module.exports = { getUsers, createUsers, modifyUsers, deleteUsers, patchUsers }
+module.exports = { 
+    getUsers, 
+    createUsers, 
+    modifyUsers, 
+    deleteUsers, 
+    patchUsers 
+}
