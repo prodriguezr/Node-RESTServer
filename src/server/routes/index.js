@@ -3,11 +3,13 @@ const Categories = require('./categories.routes');
 const Products = require('./products.routes');
 const Roles = require('./roles.routes');
 const Users = require('./users.routes');
+const Search = require('./search.routes');
 
 module.exports = {
     Auth,
     Categories,
     Products,
     Roles,
+    Search,
     Users,
 }
