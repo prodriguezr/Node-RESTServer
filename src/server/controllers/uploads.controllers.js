@@ -1,15 +1,11 @@
+const path = require('path');
+const fs = require('fs');
+
 const { response } = require("express");
 const { uploadFile } = require('../../helpers');
 const { User, Product } = require('../../models');
 
 const loadFile = async(req = request, res = response) => {
-    if (!req.files || Object.keys(req.files).length === 0 || !req.files.file) {
-        return res.status(400).json({ 
-            status: 400, 
-            msg: 'No files were uploaded'
-        });
-    }
-
     try {
         const filename = await uploadFile(req.files, [ 'txt', 'gif', 'jpeg', 'png' ], 'users');
     
@@ -26,13 +22,6 @@ const loadFile = async(req = request, res = response) => {
 }
 
 const associateFileToCollection = async(req = request, res = response) => {
-    if (!req.files || Object.keys(req.files).length === 0 || !req.files.file) {
-        return res.status(400).json({ 
-            status: 400, 
-            msg: 'No files were uploaded'
-        });
-    }
-
     const { collection, id } = req.params;
 
     let model;
@@ -68,8 +57,18 @@ const associateFileToCollection = async(req = request, res = response) => {
             });
     }
 
+    if (model.img) {
+        const imgPath = path.join(__dirname, '../../../uploads/', collection, model.img);
+
+        if (fs.existsSync(imgPath)) {
+            console.log(`Exists \'${imgPath}\'`);
+
+            fs.unlinkSync(imgPath);
+        }
+    }
+
     try {
-        const filename = await uploadFile(req.files, [ 'txt', 'gif', 'jpeg', 'png' ], collection);
+        const filename = await uploadFile(req.files, [ 'gif', 'jpeg', 'png', 'jpg' ], collection);
     
         model.img = filename;
 
@@ -87,7 +86,62 @@ const associateFileToCollection = async(req = request, res = response) => {
     }
 }
 
+const showImage = async(req = request, res = response) => {
+    const { collection, id } = req.params;
+
+    let model;
+    let placeholder;
+
+    switch (collection) {
+        case 'products':
+            model = await Product.findById(id);
+            placeholder = 'no-image.jpeg';
+
+            if (!model) {
+                return res.status(400).json({
+                    status: 400,
+                    msg: `There is no product with id ${id}`
+                });
+            }
+
+            break;
+        case 'users':
+            model = await User.findById(id);
+            placeholder = 'no-user.jpeg';
+
+            if (!model) {
+                return res.status(400).json({
+                    status: 400,
+                    msg: `There is no user with id ${id}`
+                });
+            }
+
+            break;
+    
+        default:
+            return  res.status(500).json({
+                status: 500,
+                msg: 'Can not change image for this collection and id'
+            });
+    }
+
+    if (model.img) {
+        const imgPath = path.join(__dirname, '../../../uploads/', collection, model.img);
+
+        if (fs.existsSync(imgPath)) {
+            return res.sendFile(imgPath);
+        }
+    }
+
+    const imgPath = path.join(__dirname, '../../../assets/', placeholder);
+
+    if (fs.existsSync(imgPath)) {
+        return res.sendFile(imgPath);
+    }
+}
+
 module.exports = {
     associateFileToCollection,
     loadFile,
+    showImage,
 }
