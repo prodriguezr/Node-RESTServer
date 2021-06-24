@@ -1,9 +1,10 @@
-const CategoriesCtrl = require('./categories.controllers');
-const UsersCtrl = require('./users.controllers');
 const AuthCtrl = require('./auth.controllers');
+const CategoriesCtrl = require('./categories.controllers');
+const ProductsCtrl = require('./products.controllers');
 const RolesCtrl = require('./roles.controllers');
 const SearchCtrl = require('./search.controllers');
-const ProductsCtrl = require('./products.controllers');
+const UploadCtrl = require('./uploads.controllers');
+const UsersCtrl = require('./users.controllers');
 
 module.exports = {
     AuthCtrl,
@@ -11,5 +12,6 @@ module.exports = {
     ProductsCtrl,
     RolesCtrl,
     SearchCtrl,
+    UploadCtrl,
     UsersCtrl,
 }

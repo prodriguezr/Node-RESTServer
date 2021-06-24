@@ -4,3 +4,10 @@ node_modules/
 
 # Configuración de nodemon
 nodemon.json
+
+/tmp/*
+
+*.jpeg
+*.gif
+*.png
+*.jpg

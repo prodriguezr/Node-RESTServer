@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { isValidRole, existsRoleById, existsRoleByName } = require('../../helpers/db');
+const { isValidRole, existsRoleById, existsRoleByName } = require('../../helpers');
 const { validateFields } = require('../../middlewares');
 const { SearchCtrl } = require('../controllers');
 

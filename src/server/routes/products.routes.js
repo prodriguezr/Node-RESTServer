@@ -6,7 +6,7 @@ const { validateFields,
     isAdminRole 
 } = require('../../middlewares');
 const { ProductsCtrl } = require('../controllers');
-const { existsCategoryById } = require('../../helpers/db');
+const { existsCategoryById } = require('../../helpers');
 
 const router = Router();
 

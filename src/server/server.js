@@ -1,8 +1,10 @@
 require('dotenv').config();
 
-const express = require('express');
-const morgan = require('morgan');
 const cors = require('cors');
+const express = require('express');
+const fileUpload = require('express-fileupload');
+const morgan = require('morgan');
+
 const { dbConnection } = require('../db/db-connection');
 const { validateJSON } = require('../middlewares');
 class Server {
@@ -16,6 +18,7 @@ class Server {
             products: '/api/products',
             roles: '/api/roles',
             search: '/api/search',
+            uploads: '/api/uploads',
             users: '/api/users',
         }
 
@@ -43,6 +46,12 @@ class Server {
 
         // Validate if the json is well formed
         this.app.use(validateJSON);
+
+        this.app.use(fileUpload({
+            useTempFiles : true,
+            tempFileDir : './tmp/',
+            createParentPath: true,
+        }));
     }
 
     routes() {
@@ -52,6 +61,7 @@ class Server {
             Products, 
             Roles,
             Search, 
+            Uploads,
             Users 
         } = require('./routes');
 
@@ -60,6 +70,7 @@ class Server {
         this.app.use(this.routesPath.products, Products);
         this.app.use(this.routesPath.roles, Roles);
         this.app.use(this.routesPath.search, Search);
+        this.app.use(this.routesPath.uploads, Uploads);    
         this.app.use(this.routesPath.users, Users);
     }
 

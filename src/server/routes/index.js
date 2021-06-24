@@ -2,6 +2,7 @@ const Auth = require('./auth.routes');
 const Categories = require('./categories.routes');
 const Products = require('./products.routes');
 const Roles = require('./roles.routes');
+const Uploads = require('./uploads.routes');
 const Users = require('./users.routes');
 const Search = require('./search.routes');
 
@@ -11,5 +12,6 @@ module.exports = {
     Products,
     Roles,
     Search,
+    Uploads,
     Users,
 }
