@@ -1,6 +1,10 @@
 const path = require('path');
 const fs = require('fs');
 
+// Cloudinary
+const cloudinary = require('cloudinary').v2;
+cloudinary.config(process.env.CLOUDINARY_URL);
+
 const { response } = require("express");
 const { uploadFile } = require('../../helpers');
 const { User, Product } = require('../../models');
@@ -58,19 +62,16 @@ const associateFileToCollection = async(req = request, res = response) => {
     }
 
     if (model.img) {
-        const imgPath = path.join(__dirname, '../../../uploads/', collection, model.img);
+        const publicId = model.img.split('/').pop().split('.').shift();
 
-        if (fs.existsSync(imgPath)) {
-            console.log(`Exists \'${imgPath}\'`);
-
-            fs.unlinkSync(imgPath);
-        }
+        await cloudinary.uploader.destroy(publicId);
     }
 
     try {
-        const filename = await uploadFile(req.files, [ 'gif', 'jpeg', 'png', 'jpg' ], collection);
-    
-        model.img = filename;
+        const { tempFilePath } = req.files.file;
+        const { secure_url } = await cloudinary.uploader.upload(tempFilePath);
+            
+        model.img = secure_url;
 
         await model.save();
 
